@@ -146,3 +146,15 @@ compileJava {
     options.compilerArgs.add('-Xlint:unchecked')
 }
 build.dependsOn fastrpcgenJar, rpcddsgenJar, rpcrestgenJar
+fastrpcgenJar.dependsOn copyResources
+rpcddsgenJar.dependsOn copyResources
+rpcrestgenJar.dependsOn copyResources
+copyResources.mustRunAfter processResources
+// 确保把 platforms/version/vendor 打进 JAR 根目录
+[fastrpcgenJar, rpcddsgenJar, rpcrestgenJar].each { t ->
+    t.from("$buildDir/resources/main") {
+        include "platforms"
+        include "version"
+        include "vendor"
+    }
+}
